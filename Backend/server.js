@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const app = express();
 const server = http.createServer(app);
+const dotenv = require("dotenv");
 const io = socketIo(server, {
   cors: {
     origin: "*", // Adjust this to your frontend URL in production
@@ -14,12 +15,12 @@ const io = socketIo(server, {
 });
 
 app.use(bodyParser.json());
-
+dotenv.config();
 // MySQL Connection - Update this with your Aiven credentials
 const db = mysql.createConnection({
-  host: "mysql-3b9a517d-gendrybaratheon780-6fe4.e.aivencloud.com",
-  user: "avnadmin",
-  password: "AVNS_KRYj3-Gr42xhmgoXFaM", // Replace with the actual password from Aiven
+  host: process.env.HOST_URL,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD, // Replace with the actual password from Aiven
   database: "defaultdb",
   port: 23196,
   ssl: {
@@ -35,9 +36,9 @@ db.connect((err) => {
   }
   console.log("Connected to Aiven MySQL Database.");
 });
-app.get("/",(req,res)=>{
-    res.send("Backend Server Is Up!")
-})
+app.get("/", (req, res) => {
+  res.send("Backend Server Is Up!");
+});
 // API for logging in (dummy login for demo purposes)
 app.post("/api/login", (req, res) => {
   const { username } = req.body;
