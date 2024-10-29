@@ -36,7 +36,7 @@ const db = mysql.createConnection({
   database: "defaultdb",
   port: 23196,
   ssl: {
-    ca: fs.readFileSync("./aiven-ca.pem"),
+    rejectUnauthorized: false,
   },
 });
 
