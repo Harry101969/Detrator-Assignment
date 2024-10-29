@@ -7,13 +7,25 @@ const fs = require("fs");
 const app = express();
 const server = http.createServer(app);
 const dotenv = require("dotenv");
+const cors = require("cors");
 const io = socketIo(server, {
   cors: {
-    origin: "*", // Adjust this to your frontend URL in production
+    origin: ["http://localhost:3000", "http://localhost:5173"], // Allow both frontend URLs
     methods: ["GET", "POST"],
+    credentials: true, // If you need to allow credentials (cookies, authorization headers, etc.)
   },
 });
-
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:3001",
+    ],
+    origin: true,
+    methods: ["GET", "POST", "DELETE", "PUT"],
+  })
+);
 app.use(bodyParser.json());
 dotenv.config();
 // MySQL Connection - Update this with your Aiven credentials
@@ -44,8 +56,8 @@ app.post("/api/login", (req, res) => {
   const { username } = req.body;
   const sessionID = Math.random().toString(36).substring(2);
   res.json({ sessionID, username });
+  console.log(sessionID);
 });
-
 // API to fetch comments
 app.get("/api/comments", (req, res) => {
   const query = "SELECT * FROM comments ORDER BY timestamp DESC";
